@@ -123,7 +123,7 @@ function makeCalendar(dateStart, dateLength) {
 	// Split date to ensure expected formatting (dd/mm/yyyy)
 	let params = dateStart.split('/'),
 		startDay = parseInt(params[1]),
-		startMonth = parseInt(params[0] - 1),
+		startMonth = parseInt(params[0] - 2),
 		startYear = parseInt(params[2]),
 		formatted = startYear + '/' + startMonth + '/' + startDay;
 
