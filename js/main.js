@@ -47,6 +47,8 @@ var today = getTodayDate();
 var monthName = formatNames('month', useMonthShort);
 var dayName;
 
+let holidays = {};
+
 
 
 
@@ -93,9 +95,26 @@ function formatNames(type, useShort) {
 		// Create a shallow copy of original
 		arrayFinal = arrayFull.slice();
 	}
-
 	// Return results
 	return arrayFinal;
+}
+
+
+function getHolydaysByCountryCode() {
+	const countryCode = document.getElementById('countryCode').value;
+	const files = {
+		cr: "./../holidays/cr.json",
+		us: "./../holidays/us.json"
+	}
+	const code = files[countryCode] || "./../holidays/int.json"; 
+	return fetch(code)
+		.then(response => response.json())
+		.then(data => data);
+
+}
+
+function isHoliday(date) {
+	return holidays[date];
 }
 
 // Make calendar
@@ -104,7 +123,7 @@ function makeCalendar(dateStart, dateLength) {
 	dateLength = parseInt(dateLength);
 
 	// Split date to ensure expected formatting (dd/mm/yyyy)
-	var params = dateStart.split('/'),
+	let params = dateStart.split('/'),
 		startDay = parseInt(params[1]),
 		startMonth = parseInt(params[0] - 2),
 		startYear = parseInt(params[2]),
@@ -114,11 +133,11 @@ function makeCalendar(dateStart, dateLength) {
 	createNewMonth(startMonth, startYear);
 
 	// Define temporal variables for loop
-	var tempDay, tempMonth, tempYear, monthLimit, firstDay, tempCount = 0;
+	let tempDay, tempMonth, tempYear, monthLimit, firstDay, tempCount = 0;
 
 	// Iterate on user input length
-	for (var j = 0; j <= dateLength; j++) {
-		var isLast = (j === dateLength);
+	for (let j = 0; j <= dateLength; j++) {
+		let isLast = (j === dateLength);
 
 		// First iteration (staring day)
 		if ( j === 0 ) {
@@ -129,7 +148,7 @@ function makeCalendar(dateStart, dateLength) {
 			firstDay	= firstDayOfMonth(tempYear, tempMonth);
 
 			// Fix empty spaces array iteration length if week starts on monday
-			var loopLen = tempDay - 1;
+			let loopLen = tempDay - 1;
 
 			// Add all invalid day spaces before start date
 			addEmptyDaySpaces(tempYear, tempMonth, loopLen);
@@ -158,7 +177,7 @@ function makeCalendar(dateStart, dateLength) {
 		}
 
 		if ( !isLast ) {
-			var $month = document.getElementById(monthName[tempMonth] +  '_' + tempYear);
+			let $month = document.getElementById(monthName[tempMonth] +  '_' + tempYear);
 			let $day_cell = document.createElement('li');
 			let $day_name = document.createElement('span');
 
@@ -178,9 +197,21 @@ function makeCalendar(dateStart, dateLength) {
 				$day_cell.classList.add('today');
 			}
 
+			if(isHoliday(`${tempMonth + 2}/${tempDay + tempCount - 1}`)){
+				const holi = isHoliday(`${tempMonth + 2}/${tempDay + tempCount - 1}`);
+				$day_cell.classList.add('holiday');
+				$day_cell.addEventListener("click", () => {
+					alert(holi[0].name)
+				});
+			}
+
+			// console.log("hodidays ", holidays);
+			// console.log("mes numero ", tempMonth, "day numero ", tempDay + tempCount - 1)
+
 			// Append day name to month table container
 			$day_cell.appendChild($day_name);
 			$month.appendChild($day_cell);
+
 		} else {
 			// Add all invalid day spaces after end date
 			fillEmptyMonth(tempYear, tempMonth, tempDay + tempCount, monthLimit);
@@ -188,6 +219,7 @@ function makeCalendar(dateStart, dateLength) {
 
 		// Increment temp day counter
 		tempCount++;
+		// aqui va en codigo
 	}
 
 	// Remove loading class after all days/months are rendered
@@ -234,7 +266,7 @@ function createNewMonth(curMonth, curYear) {
 	for (var i = 0; i < dayName.length; i++) {
 		let $day_cell = document.createElement('li');
 		let $day_name = document.createElement('span');
-
+		
 		// Add day name
 		$day_name.innerText = dayName[i];
 		// Append day name to list item
@@ -298,7 +330,7 @@ function updateButtonText() {
 }
 
 // Validate form data and submit
-function validateForm() {
+async function validateForm() {
 	var formElem = document.getElementById('cal_form'),
 		inputArray = formElem.querySelectorAll('input');
 
@@ -313,10 +345,10 @@ function validateForm() {
 		});
 	}
   
-	formElem.addEventListener('submit', function(e) {
+	formElem.addEventListener('submit', async function(e) {
 		e.preventDefault();
 		updateButtonText();
-
+		holidays = await getHolydaysByCountryCode();
 		var errorsLen = 0, i = 0;
 
 		while (i < inputArray.length) {

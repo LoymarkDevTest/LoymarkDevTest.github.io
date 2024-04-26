@@ -73,6 +73,12 @@
 	color: #ffffff;
 }
 
+.month ul > li.holiday,
+.month ol > li.holiday {
+	background-color: #3d9438;
+	color: #ffffff;
+}
+
 .month ul > li > span,
 .month ol > li > span {
 	display: block;
