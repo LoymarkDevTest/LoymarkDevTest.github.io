@@ -50,8 +50,6 @@ var dayName;
 let holidays = {};
 
 
-
-
 /*
  *  Helpers
  */
@@ -100,7 +98,7 @@ function formatNames(type, useShort) {
 }
 
 
-function getHolydaysByCountryCode() {
+function getHolidaysByCountryCode() {
 	const countryCode = document.getElementById('countryCode').value;
 	const files = {
 		cr: "./../holidays/cr.json",
@@ -125,12 +123,12 @@ function makeCalendar(dateStart, dateLength) {
 	// Split date to ensure expected formatting (dd/mm/yyyy)
 	let params = dateStart.split('/'),
 		startDay = parseInt(params[1]),
-		startMonth = parseInt(params[0] - 2),
+		startMonth = parseInt(params[0] - 1),
 		startYear = parseInt(params[2]),
 		formatted = startYear + '/' + startMonth + '/' + startDay;
 
 	// Create new month structure
-	createNewMonth(startMonth, startYear);
+	createNewMonth(startMonth , startYear);
 
 	// Define temporal variables for loop
 	let tempDay, tempMonth, tempYear, monthLimit, firstDay, tempCount = 0;
@@ -204,9 +202,6 @@ function makeCalendar(dateStart, dateLength) {
 					alert(holi[0].name)
 				});
 			}
-
-			// console.log("hodidays ", holidays);
-			// console.log("mes numero ", tempMonth, "day numero ", tempDay + tempCount - 1)
 
 			// Append day name to month table container
 			$day_cell.appendChild($day_name);
@@ -330,7 +325,7 @@ function updateButtonText() {
 }
 
 // Validate form data and submit
-async function validateForm() {
+function validateForm() {
 	var formElem = document.getElementById('cal_form'),
 		inputArray = formElem.querySelectorAll('input');
 
@@ -348,7 +343,7 @@ async function validateForm() {
 	formElem.addEventListener('submit', async function(e) {
 		e.preventDefault();
 		updateButtonText();
-		holidays = await getHolydaysByCountryCode();
+		holidays = await getHolidaysByCountryCode();
 		var errorsLen = 0, i = 0;
 
 		while (i < inputArray.length) {
