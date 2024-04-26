@@ -67,6 +67,12 @@
 	background-color: #89bee4;
 }
 
+.month ul > li.today,
+.month ol > li.today {
+	background-color: #444444;
+	color: #ffffff;
+}
+
 .month ul > li > span,
 .month ol > li > span {
 	display: block;
