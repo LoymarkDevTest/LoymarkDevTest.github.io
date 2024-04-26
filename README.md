@@ -45,5 +45,9 @@ https://LoymarkDevTest.github.io/
 
 ## Use this space to list requirements you could not implement.
 
+- I think there is an error in the rerender and the title of the calendar, but I didn't have time to correct it.
+### Final notes:
+Please use a server to avoid CORS problems, thank you! 
+### Thanks guys
 
 ## Use this space to share bugs you’ve identified but didn’t have time to fix.
